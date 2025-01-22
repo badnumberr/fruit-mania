@@ -194,12 +194,12 @@ def show_intro():
                 mouse_x, mouse_y = event.pos
                 if (670 < mouse_x < 970) and (350 < mouse_y < 490):
                     intro_running = False
-                    start_game()  # Предполагается, что эта функция определена
+                    start_game()
                 if (670 < mouse_x < 870) and (450 < mouse_y < 550):
                     font = pygame.font.Font(None, 30)
                     text = font.render("(Чтобы закрыть инструкцию нажмите любую кнопку на клавиатуре)", True, 'white')
                     screen.blit(text, (500, 840))
-                    show_instructions()  # Предполагается, что эта функция определена
+                    show_instructions()
                 if (670 < mouse_x < 970) and (550 < mouse_y < 690):
                     show_settings()
 
@@ -257,7 +257,7 @@ def show_settings():
         screen.blit(intro_image, (0, 0))
 
         overlay_surface = pygame.Surface((600, 800))
-        overlay_surface.fill((0, 0, 0, 200))  # Полупрозрачный черный фон
+        overlay_surface.fill((0, 0, 0, 200))
         screen.blit(overlay_surface, (550, 0))
 
         font = pygame.font.Font(None, 50)
