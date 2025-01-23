@@ -65,6 +65,21 @@ instruction_button_image = pygame.transform.scale(instruction_button_image, (300
 registration_image = pygame.image.load("images/registration_background.png")
 registration_image = pygame.transform.scale(registration_image, (300, 140))
 
+registration_button = pygame.image.load("images/registration_button.png")
+registration_button = pygame.transform.scale(registration_button, (260, 140))
+
+login_button = pygame.image.load("images/login_button.png")
+login_button = pygame.transform.scale(login_button, (260, 140))
+
+back_button_image = pygame.image.load("images/back_button.png")
+back_button_image = pygame.transform.scale(back_button_image, (200, 100))
+
+warning = pygame.image.load("images/warning.png")
+warning = pygame.transform.scale(warning, (900, 200))
+
+player_can_play = False
+
+
 login_screen = False
 nickname = ""
 password = ""
@@ -83,11 +98,32 @@ def show_instructions():
                 instructions_running = False
 
         if a < 255:
-            a += 5
+            a += 3
         else:
             a = 255
         instruction_image.set_alpha(a)
         screen.blit(instruction_image, (550, 50))
+        pygame.display.flip()
+        pygame.time.delay(5)
+
+
+def show_warning():
+    a = 0
+    warning_running = True
+    while warning_running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type == pygame.KEYDOWN:
+                warning_running = False
+
+        if a < 255:
+            a += 3
+        else:
+            a = 255
+        warning.set_alpha(a)
+        screen.blit(warning, (370, 350))
         pygame.display.flip()
         pygame.time.delay(5)
 
@@ -192,26 +228,33 @@ def show_intro():
                 intro_running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_x, mouse_y = event.pos
-                if (670 < mouse_x < 970) and (350 < mouse_y < 490):
+                if (670 < mouse_x < 970) and (350 < mouse_y < 490) and player_can_play:
                     intro_running = False
                     start_game()
+
+                if (670 < mouse_x < 970) and (350 < mouse_y < 490) and not player_can_play:
+                    show_warning()
                 if (670 < mouse_x < 870) and (450 < mouse_y < 550):
                     font = pygame.font.Font(None, 30)
                     text = font.render("(Чтобы закрыть инструкцию нажмите любую кнопку на клавиатуре)", True, 'white')
                     screen.blit(text, (500, 840))
                     show_instructions()
-                if (670 < mouse_x < 970) and (550 < mouse_y < 690):
+                if (290 < mouse_x < 550) and (770 < mouse_y < 910):
                     show_settings()
 
         screen.blit(intro_image, (0, 0))
         screen.blit(settings_image, (670, 450))
         screen.blit(instruction_button_image, (670, 550))
         screen.blit(play_image, (670, 350))
+        screen.blit(login_button, (20, 770))
+        screen.blit(registration_button, (290, 770))
 
         pygame.display.flip()
         pygame.time.delay(5)
 
+
 def show_settings():
+    global player_can_play
     settings_running = True
     nickname = ''
     password = ''
@@ -231,6 +274,7 @@ def show_settings():
                         is_nickname_done = True
                     else:
                         print(f"Имя игрока: {nickname}, Пароль: {password}")
+                        player_can_play = True
                 elif event.key == pygame.K_BACKSPACE:
                     if input_active:
                         if len(password) > 0:
@@ -249,6 +293,11 @@ def show_settings():
                     if event.unicode and event.unicode.isprintable():
                         nickname += event.unicode
 
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_x, mouse_y = event.pos
+                if back_button_rect.collidepoint(mouse_x, mouse_y):
+                    settings_running = False
+
         cursor_timer += 1
         if cursor_timer >= 30:
             cursor_visible = not cursor_visible
@@ -257,6 +306,7 @@ def show_settings():
         screen.blit(intro_image, (0, 0))
 
         overlay_surface = pygame.Surface((600, 800))
+        overlay_surface.set_alpha(130)
         overlay_surface.fill((0, 0, 0, 200))
         screen.blit(overlay_surface, (550, 0))
 
@@ -282,8 +332,14 @@ def show_settings():
         if is_nickname_done:
             input_active = True
 
+        back_button_rect = back_button_image.get_rect(center=(w // 2, h - 100))
+        screen.blit(back_button_image, back_button_rect)
+
         pygame.display.flip()
         pygame.time.delay(100)
+
+    if player_can_play:
+        print("Игрок зарегистрирован или вошел в систему.")
 
 
 show_intro()

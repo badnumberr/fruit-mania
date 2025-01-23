@@ -5,7 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ee27d05d-a59e-47a1-a012-2445989d3a0a" name="Changes" comment="fruitmania">
-      <change afterPath="$PROJECT_DIR$/fruitmania/images/registration_background.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fruitmania/images/back_button.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fruitmania/images/login_button.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fruitmania/images/registration_button.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fruitmania/images/warning.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fruitmania/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/fruitmania/test.py" afterDir="false" />
     </list>
