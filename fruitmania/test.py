@@ -1,5 +1,6 @@
 import pygame
 import random
+import sqlite3
 
 pygame.init()
 w = 1700
@@ -25,57 +26,37 @@ strawberrys = []
 oranges = []
 
 score = 0
+max_score = 0
 fruits_timer = 2500
 last_fruit = pygame.time.get_ticks()
 contact_distance = 80
 
-banana_image = pygame.image.load("images/banana.png")
-banana_image = pygame.transform.scale(banana_image, (70, 70))
 
-bomb_image = pygame.image.load("images/bomb.png")
-bomb_image = pygame.transform.scale(bomb_image, (80, 80))
+def load_image(path, size):
+    try:
+        image = pygame.image.load(path)
+        return pygame.transform.scale(image, size)
+    except pygame.error as e:
+        print(f"Ошибка загрузки изображения {path}: {e}")
+        return None
 
-strawberry_image = pygame.image.load("images/strawberry.png")
-strawberry_image = pygame.transform.scale(strawberry_image, (70, 70))
 
-orange_image = pygame.image.load("images/orange.png")
-orange_image = pygame.transform.scale(orange_image, (70, 70))
-
-background_image = pygame.image.load("images/background.png")
-background_image = pygame.transform.scale(background_image, (1200, h))
-
-intro_image = pygame.image.load("images/intro.png")
-intro_image = pygame.transform.scale(intro_image, (w, h))
-
-game_over_image = pygame.image.load("images/gameover.png")
-game_over_image = pygame.transform.scale(game_over_image, (w, h))
-
-instruction_image = pygame.image.load("images/instruction.png")
-instruction_image = pygame.transform.scale(instruction_image, (600, 800))
-
-settings_image = pygame.image.load("images/instruction_button.png")
-settings_image = pygame.transform.scale(settings_image, (300, 140))
-
-play_image = pygame.image.load("images/play_button.png")
-play_image = pygame.transform.scale(play_image, (300, 140))
-
-instruction_button_image = pygame.image.load("images/settings_button.png")
-instruction_button_image = pygame.transform.scale(instruction_button_image, (300, 140))
-
-registration_image = pygame.image.load("images/registration_background.png")
-registration_image = pygame.transform.scale(registration_image, (300, 140))
-
-registration_button = pygame.image.load("images/registration_button.png")
-registration_button = pygame.transform.scale(registration_button, (260, 140))
-
-login_button = pygame.image.load("images/login_button.png")
-login_button = pygame.transform.scale(login_button, (260, 140))
-
-back_button_image = pygame.image.load("images/back_button.png")
-back_button_image = pygame.transform.scale(back_button_image, (200, 100))
-
-warning = pygame.image.load("images/warning.png")
-warning = pygame.transform.scale(warning, (900, 200))
+banana_image = load_image("images/banana.png", (70, 70))
+bomb_image = load_image("images/bomb.png", (80, 80))
+strawberry_image = load_image("images/strawberry.png", (70, 70))
+orange_image = load_image("images/orange.png", (70, 70))
+background_image = load_image("images/background.png", (1200, h))
+intro_image = load_image("images/intro.png", (w, h))
+game_over_image = load_image("images/gameover.png", (w, h))
+instruction_image = load_image("images/instruction.png", (600, 800))
+settings_image = load_image("images/instruction_button.png", (300, 140))
+play_image = load_image("images/play_button.png", (300, 140))
+instruction_button_image = load_image("images/settings_button.png", (300, 140))
+registration_image = load_image("images/registration_background.png", (300, 140))
+registration_button = load_image("images/registration_button.png", (260, 140))
+login_button = load_image("images/login_button.png", (260, 140))
+back_button_image = load_image("images/back_button.png", (200, 100))
+warning = load_image("images/warning.png", (900, 200))
 
 player_can_play = False
 
@@ -84,6 +65,11 @@ login_screen = False
 nickname = ""
 password = ""
 input_active = [False, False]
+
+is_registered = False
+
+conn = sqlite3.connect('fruitmania.db')
+cursor = conn.cursor()
 
 
 def show_instructions():
@@ -168,8 +154,6 @@ def start_game():
         pygame.display.flip()
         pygame.time.delay(5)
 
-    pygame.quit()
-
 
 def handle_fruits(fruit_list, speed, score_change, is_bomb=False):
     global score
@@ -231,7 +215,6 @@ def show_intro():
                 if (670 < mouse_x < 970) and (350 < mouse_y < 490) and player_can_play:
                     intro_running = False
                     start_game()
-
                 if (670 < mouse_x < 970) and (350 < mouse_y < 490) and not player_can_play:
                     show_warning()
                 if (670 < mouse_x < 870) and (450 < mouse_y < 550):
@@ -239,22 +222,28 @@ def show_intro():
                     text = font.render("(Чтобы закрыть инструкцию нажмите любую кнопку на клавиатуре)", True, 'white')
                     screen.blit(text, (500, 840))
                     show_instructions()
-                if (290 < mouse_x < 550) and (770 < mouse_y < 910):
-                    show_settings()
+                if (290 < mouse_x < 550) and (770 < mouse_y < 910) and not is_registered:
+                    show_registration()
 
         screen.blit(intro_image, (0, 0))
         screen.blit(settings_image, (670, 450))
         screen.blit(instruction_button_image, (670, 550))
         screen.blit(play_image, (670, 350))
-        screen.blit(login_button, (20, 770))
-        screen.blit(registration_button, (290, 770))
+
+        if not is_registered:
+            screen.blit(login_button, (20, 770))
+            screen.blit(registration_button, (290, 770))
+        else:
+            font = pygame.font.Font(None, 55)
+            text = font.render(nickname, True, 'white')
+            screen.blit(text, (20, 850))
 
         pygame.display.flip()
         pygame.time.delay(5)
 
 
-def show_settings():
-    global player_can_play
+def show_registration():
+    global player_can_play, nickname, is_registered
     settings_running = True
     nickname = ''
     password = ''
@@ -273,8 +262,8 @@ def show_settings():
                     if not is_nickname_done:
                         is_nickname_done = True
                     else:
-                        print(f"Имя игрока: {nickname}, Пароль: {password}")
                         player_can_play = True
+                        is_registered = True
                 elif event.key == pygame.K_BACKSPACE:
                     if input_active:
                         if len(password) > 0:
@@ -338,9 +327,7 @@ def show_settings():
         pygame.display.flip()
         pygame.time.delay(100)
 
-    if player_can_play:
-        print("Игрок зарегистрирован или вошел в систему.")
-
 
 show_intro()
+conn.close()
 pygame.quit()
