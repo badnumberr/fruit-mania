@@ -33,17 +33,18 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.1.executor": "Run",
-    "Python.aa.executor": "Run",
-    "Python.test.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "C:/Users/чепушик/PycharmProjects/pythonProject10/fruitmania"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.1.executor&quot;: &quot;Run&quot;,
+    &quot;Python.aa.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/чепушик/PycharmProjects/pythonProject10/fruitmania&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\чепушик\PycharmProjects\pythonProject10\fruitmania" />
@@ -51,6 +52,7 @@
       <recent name="C:\Users\чепушик\PycharmProjects\pythonProject10" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\чепушик\PycharmProjects\pythonProject10\fruitmania\registered_players" />
       <recent name="C:\Users\чепушик\PycharmProjects\pythonProject10\fruitmania\images" />
       <recent name="C:\Users\чепушик\PycharmProjects\pythonProject10\fruitmania" />
     </key>
@@ -150,7 +152,15 @@
       <option name="project" value="LOCAL" />
       <updated>1737648129585</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="fruitmania">
+      <option name="closed" value="true" />
+      <created>1737717593956</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1737717593956</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="UnknownFeatures">
