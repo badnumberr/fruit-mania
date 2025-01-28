@@ -35,6 +35,8 @@ current_player_data = {}
 
 data_file = 'registered_players/players_data.txt'
 
+max_score_for_win = 50
+
 
 def load_image(path, size):
     try:
@@ -44,6 +46,14 @@ def load_image(path, size):
         print(f"Ошибка загрузки изображения {path}: {e}")
         return None
 
+
+monkey_image = load_image("images/monkey.png", (140, 200))
+monkey_x = player_x
+monkey_y = player_y
+monkey_speed = 15
+monkey_scale = 1.0
+scale_increment = 0.1
+max_scale = 1.5
 
 banana_image = load_image("images/banana.png", (70, 70))
 bomb_image = load_image("images/bomb.png", (80, 80))
@@ -59,11 +69,17 @@ instruction_button_image = load_image("images/settings_button.png", (300, 140))
 registration_image = load_image("images/registration_background.png", (300, 140))
 registration_button = load_image("images/registration_button.png", (260, 140))
 login_button = load_image("images/login_button.png", (260, 140))
-back_button_image = load_image("images/back_button.png", (200, 100))
+back_button_image = load_image("images/back_button.png", (180, 90))
 warning = load_image("images/warning.png", (900, 200))
+
+pause_image = load_image("images/pause.png", (180, 90))
+continue_image = load_image("images/continue.png", (400, 200))
+intro_open_image = load_image("images/intro_open.png", (400, 200))
 
 player_can_play = False
 game_running = True
+game_over_running = True
+game_win_running = True
 
 login_screen = False
 nickname = ""
@@ -220,17 +236,34 @@ def show_warning():
 def start_game():
     global player_x, player_y, score, bananas, bombs, strawberrys, oranges, last_fruit
     global game_running
+
+    player_x = w // 2 - player_size // 2
+    player_y = h - player_size - 10
+    score = 0
+    bananas.clear()
+    bombs.clear()
+    strawberrys.clear()
+    oranges.clear()
+    last_fruit = pygame.time.get_ticks()
     game_running = True
 
     while game_running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 game_running = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_x, mouse_y = event.pos
+                if (1500 < mouse_x < 1700) and (10 < mouse_y < 100):
+                    game_over()
+                    game_running = False
+                    show_intro()
+                if (1310 < mouse_x < 1490) and (10 < mouse_y < 100):
+                    pause_game()
 
         k = pygame.key.get_pressed()
         if k[pygame.K_LEFT] and player_x > 0:
             player_x -= player_speed
-        if k[pygame.K_RIGHT] and player_x < 1200 - player_size:
+        if k[pygame.K_RIGHT] and player_x < 1050:
             player_x += player_speed
 
         current_time = pygame.time.get_ticks()
@@ -256,7 +289,7 @@ def start_game():
 
         draw_game()
         pygame.display.flip()
-        pygame.time.delay(5)
+        pygame.time.delay(20)
 
     game_over()
 
@@ -277,6 +310,10 @@ def handle_fruits(fruit_list, speed, score_change, is_bomb=False):
         elif fruit_list[i][1] > h + fruits_size:
             fruit_list.pop(i)
 
+    if score >= max_score_for_win:
+        score = max_score_for_win
+        game_win()
+
     for banana in bananas:
         screen.blit(banana_image, (banana[0], banana[1]))
     for bomb in bombs:
@@ -285,17 +322,17 @@ def handle_fruits(fruit_list, speed, score_change, is_bomb=False):
         screen.blit(strawberry_image, (strawberry[0], strawberry[1]))
     for orange in oranges:
         screen.blit(orange_image, (orange[0], orange[1]))
-
-    pygame.display.flip()
-    pygame.time.delay(5)
 
 
 def draw_game():
     screen.fill('black')
     screen.blit(background_image, (0, 0))
+
     player_image = pygame.image.load("images/player.png")
     player_image = pygame.transform.scale(player_image, (140, 200))
     screen.blit(player_image, (player_x, player_y))
+
+
     for banana in bananas:
         screen.blit(banana_image, (banana[0], banana[1]))
     for bomb in bombs:
@@ -304,6 +341,10 @@ def draw_game():
         screen.blit(strawberry_image, (strawberry[0], strawberry[1]))
     for orange in oranges:
         screen.blit(orange_image, (orange[0], orange[1]))
+
+    screen.blit(pause_image, (1310, 10))
+    screen.blit(back_button_image, (1500, 10))
+
 
     font = pygame.font.Font(None, 50)
     text = font.render(f"Рекорд игрока: {score}", True, 'white')
@@ -314,11 +355,18 @@ def draw_game():
 
 
 def game_over():
-    global max_score, game_running
+    global max_score, game_running, game_over_running, monkey_x, monkey_y
     game_running = False
     if score > max_score:
         max_score = score
         save_player_data()
+
+    monkey_x = w // 2 - 250
+    monkey_y = h // 2
+
+    dance_direction = 1
+    dance_amplitude = 10
+    dance_speed = 5
 
     while True:
         for event in pygame.event.get():
@@ -328,13 +376,74 @@ def game_over():
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
-                    show_intro()
+                    return
+
+        screen.fill('black')
+        screen.blit(background_image, (0, 0))
+
+        monkey_y += dance_direction * dance_speed
+        if monkey_y > h // 2 + dance_amplitude or monkey_y < h // 2 - dance_amplitude:
+            dance_direction *= -1
+
+        scaled_monkey_image = pygame.transform.scale(monkey_image, (500, 540))
+        screen.blit(scaled_monkey_image, (monkey_x, monkey_y - (scaled_monkey_image.get_height() - 500) // 2))
 
         font = pygame.font.Font(None, 72)
         game_over_text = font.render("Игра Окончена", True, (255, 0, 0))
         screen.blit(game_over_text, (w // 2 - game_over_text.get_width() // 2, h // 2 - 50))
 
         final_score_text = font.render(f"Ваш счет: {score}", True, (255, 255, 0))
+        screen.blit(final_score_text, (w // 2 - final_score_text.get_width() // 2, h // 2 + 10))
+
+        return_button_text = font.render("Нажмите Enter, чтобы вернуться", True, (255, 255, 255))
+        screen.blit(return_button_text, (w // 2 - return_button_text.get_width() // 2, h // 2 + 70))
+
+        pygame.display.flip()
+        pygame.time.delay(20)
+
+    while game_over_running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    show_intro()
+                    game_over_running = False
+
+
+
+        pygame.display.flip()
+        pygame.time.delay(100)
+
+
+def game_win():
+    global max_score, game_running, game_win_running
+    game_running = False
+    if score > max_score:
+        max_score = score
+        save_player_data()
+
+    while game_win_running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    show_intro()
+                    game_win_running = False
+
+
+
+
+        font = pygame.font.Font(None, 72)
+        game_over_text = font.render("Победа!", True, (255, 0, 0))
+        screen.blit(game_over_text, (w // 2 - game_over_text.get_width() // 2, h // 2 - 50))
+
+        final_score_text = font.render(f"Ваш счет: {max_score_for_win}", True, (255, 255, 0))
         screen.blit(final_score_text, (w // 2 - final_score_text.get_width() // 2, h // 2 + 10))
 
         return_button_text = font.render("Нажмите Enter, чтобы вернуться", True, (255, 255, 255))
@@ -375,6 +484,7 @@ def show_intro():
         screen.blit(instruction_button_image, (670, 550))
         screen.blit(play_image, (670, 350))
 
+
         if not is_registered:
             screen.blit(login_button, (20, 770))
             screen.blit(registration_button, (290, 770))
@@ -385,6 +495,39 @@ def show_intro():
 
         pygame.display.flip()
         pygame.time.delay(5)
+
+
+def pause_game():
+    paused = True
+    while paused:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_a:
+                    paused = False
+                if event.key == pygame.K_d:  #
+                    show_intro()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_x, mouse_y = event.pos
+                if (350 < mouse_x < 750) and (350 < mouse_y < 650):
+                    paused = False
+                    start_game()
+                if (900 < mouse_x < 1300) and (350 < mouse_y < 650):
+                    paused = False
+                    show_intro()
+
+        overlay_surface = pygame.Surface((w, h))
+        overlay_surface.fill((0, 0, 0))
+        overlay_surface.set_alpha(130)
+        screen.blit(overlay_surface, (0, 0))
+
+        screen.blit(continue_image, (350, 350))
+        screen.blit(intro_open_image, (900, 350))
+
+        pygame.display.flip()
+        pygame.time.delay(20)
 
 
 def show_registration():

@@ -6,6 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="ee27d05d-a59e-47a1-a012-2445989d3a0a" name="Changes" comment="fruitmania">
       <change afterPath="$PROJECT_DIR$/fruitmania/fruitmania.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fruitmania/images/continue.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fruitmania/images/intro_open.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fruitmania/images/monkey.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fruitmania/images/pause.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fruitmania/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/fruitmania/test.py" afterDir="false" />
     </list>
@@ -33,22 +37,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.1.executor&quot;: &quot;Run&quot;,
-    &quot;Python.aa.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/чепушик/PycharmProjects/pythonProject10/fruitmania&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.1.executor": "Run",
+    "Python.aa.executor": "Run",
+    "Python.main.executor": "Run",
+    "Python.test.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "C:/Users/чепушик/PycharmProjects/pythonProject10/fruitmania/images"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\чепушик\PycharmProjects\pythonProject10\fruitmania" />
       <recent name="C:\Users\чепушик\PycharmProjects\pythonProject10\fruitmania\images" />
+      <recent name="C:\Users\чепушик\PycharmProjects\pythonProject10\fruitmania" />
       <recent name="C:\Users\чепушик\PycharmProjects\pythonProject10" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -160,7 +164,15 @@
       <option name="project" value="LOCAL" />
       <updated>1737717593956</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="fruitmania">
+      <option name="closed" value="true" />
+      <created>1737907599227</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1737907599227</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="UnknownFeatures">
