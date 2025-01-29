@@ -5,12 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ee27d05d-a59e-47a1-a012-2445989d3a0a" name="Changes" comment="fruitmania">
-      <change afterPath="$PROJECT_DIR$/fruitmania/fruitmania.db" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/fruitmania/images/continue.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/fruitmania/images/intro_open.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/fruitmania/images/monkey.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/fruitmania/images/pause.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fruitmania/images/level1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fruitmania/images/level2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fruitmania/images/monkey_over.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fruitmania/music/fruit.mp3" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fruitmania/music/game.mp3" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fruitmania/music/game_over.mp3" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fruitmania/music/game_win.mp3" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fruitmania/music/intro.mp3" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fruitmania/music/pause.mp3" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fruitmania/music/score.mp3" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fruitmania/images/monkey.png" beforeDir="false" afterPath="$PROJECT_DIR$/fruitmania/images/monkey.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fruitmania/registered_players/players_data.txt" beforeDir="false" afterPath="$PROJECT_DIR$/fruitmania/registered_players/players_data.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fruitmania/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/fruitmania/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -46,18 +53,19 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "master",
-    "last_opened_file_path": "C:/Users/чепушик/PycharmProjects/pythonProject10/fruitmania/images"
+    "last_opened_file_path": "C:/Users/чепушик/PycharmProjects/pythonProject10/fruitmania/music"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\чепушик\PycharmProjects\pythonProject10\fruitmania\music" />
       <recent name="C:\Users\чепушик\PycharmProjects\pythonProject10\fruitmania\images" />
       <recent name="C:\Users\чепушик\PycharmProjects\pythonProject10\fruitmania" />
       <recent name="C:\Users\чепушик\PycharmProjects\pythonProject10" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\чепушик\PycharmProjects\pythonProject10\fruitmania\registered_players" />
       <recent name="C:\Users\чепушик\PycharmProjects\pythonProject10\fruitmania\images" />
+      <recent name="C:\Users\чепушик\PycharmProjects\pythonProject10\fruitmania\registered_players" />
       <recent name="C:\Users\чепушик\PycharmProjects\pythonProject10\fruitmania" />
     </key>
   </component>
@@ -172,7 +180,15 @@
       <option name="project" value="LOCAL" />
       <updated>1737907599227</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="fruitmania">
+      <option name="closed" value="true" />
+      <created>1738070092416</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1738070092416</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="UnknownFeatures">

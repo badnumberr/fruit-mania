@@ -32,6 +32,11 @@ fruits_timer = 2500
 last_fruit = pygame.time.get_ticks()
 contact_distance = 80
 current_player_data = {}
+fruit_sound = pygame.mixer.Sound("music/fruit.mp3")
+score_sound = pygame.mixer.Sound("music/score.mp3")
+pause_sound = pygame.mixer.Sound("music/pause.mp3")
+game_over_sound = pygame.mixer.Sound("music/game_over.mp3")
+game_win_sound = pygame.mixer.Sound("music/game_win.mp3")
 
 data_file = 'registered_players/players_data.txt'
 
@@ -48,6 +53,7 @@ def load_image(path, size):
 
 
 monkey_image = load_image("images/monkey.png", (140, 200))
+monkey_over_image = load_image("images/monkey_over.png", (140, 200))
 monkey_x = player_x
 monkey_y = player_y
 monkey_speed = 15
@@ -76,10 +82,13 @@ pause_image = load_image("images/pause.png", (180, 90))
 continue_image = load_image("images/continue.png", (400, 200))
 intro_open_image = load_image("images/intro_open.png", (400, 200))
 
+level1_image = load_image("images/level1.png", (400, 200))
+level2_image = load_image("images/level2.png", (400, 200))
+
 player_can_play = False
-game_running = True
-game_over_running = True
-game_win_running = True
+game_running = False
+game_over_running = False
+game_win_running = False
 
 login_screen = False
 nickname = ""
@@ -233,9 +242,81 @@ def show_warning():
         pygame.time.delay(5)
 
 
-def start_game():
+def reset_game():
+    global player_x, player_y, score, bananas, bombs, strawberrys, oranges, last_fruit, game_running, player_can_play, game_over_running, game_win_running
+    player_x = w // 2 - player_size // 2
+    player_y = h - player_size - 10
+    score = 0
+    bananas.clear()
+    bombs.clear()
+    strawberrys.clear()
+    oranges.clear()
+    last_fruit = pygame.time.get_ticks()
+    game_running = False
+    player_can_play = False
+    game_over_running = False
+    game_win_running = False
+
+
+def show_level_selection():
+    level_selection_running = True
+    while level_selection_running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type == pygame.KEYDOWN:
+                level_selection_running = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_x, mouse_y = event.pos
+                if back_button_rect.collidepoint(mouse_x, mouse_y):
+                    level_selection_running = False
+
+                if level1_rect.collidepoint(mouse_x, mouse_y):
+                    start_game(level=1)
+                    return
+
+                elif level2_rect.collidepoint(mouse_x, mouse_y):
+                    start_game(level=2)
+                    return
+
+        screen.fill('black')
+        screen.blit(intro_image, (0, 0))
+
+        text_y_position = h // 2 + 100
+
+        level1_rect = screen.blit(level1_image, (w // 2 - 500, h // 2 - 100))
+        font = pygame.font.Font(None, 36)
+        level1_text = font.render("Уровень сложности: ЛЕГКИЙ", True, 'white')
+
+        level1_background = pygame.Surface((level1_text.get_width() + 20, level1_text.get_height() + 20))
+        level1_background.set_alpha(150)
+        level1_background.fill((0, 0, 0))
+        screen.blit(level1_background, (w // 2 - 490, text_y_position - 10))
+        screen.blit(level1_text, (w // 2 - 480, text_y_position))
+
+        level2_rect = screen.blit(level2_image, (w // 2 + 130, h // 2 - 100))
+        level2_text = font.render("Уровень сложности: СЛОЖНЫЙ", True, 'red')
+
+        level2_background = pygame.Surface((level2_text.get_width() + 20, level2_text.get_height() + 20))
+        level2_background.set_alpha(150)
+        level2_background.fill((0, 0, 0))
+        screen.blit(level2_background, (w // 2 + 130 - 10, text_y_position - 10))
+        screen.blit(level2_text, (w // 2 + 130, text_y_position))
+
+        back_button_rect = back_button_image.get_rect(center=(w // 2, h - 100))
+        screen.blit(back_button_image, back_button_rect)
+
+        pygame.display.flip()
+        pygame.time.delay(20)
+
+
+def start_game(level=1):
     global player_x, player_y, score, bananas, bombs, strawberrys, oranges, last_fruit
     global game_running
+
+    pygame.mixer.music.load("music/game.mp3")
+    pygame.mixer.music.play(-1)
 
     player_x = w // 2 - player_size // 2
     player_y = h - player_size - 10
@@ -246,6 +327,19 @@ def start_game():
     oranges.clear()
     last_fruit = pygame.time.get_ticks()
     game_running = True
+
+    if level == 1:
+        fruits_timer = 2500
+        banana_speed = 5
+        bomb_speed = 6
+        strawberry_speed = 8
+        oranges_speed = 5.5
+    elif level == 2:
+        fruits_timer = 1500
+        banana_speed = 7
+        bomb_speed = 4
+        strawberry_speed = 10
+        oranges_speed = 8
 
     while game_running:
         for event in pygame.event.get():
@@ -291,8 +385,6 @@ def start_game():
         pygame.display.flip()
         pygame.time.delay(20)
 
-    game_over()
-
 
 def handle_fruits(fruit_list, speed, score_change, is_bomb=False):
     global score, game_running
@@ -305,8 +397,10 @@ def handle_fruits(fruit_list, speed, score_change, is_bomb=False):
             return
 
         if (not is_bomb) and (abs(player_x - circle_x) < contact_distance and abs(player_y - circle_y) < contact_distance):
+            fruit_sound.play()
             score += score_change
             fruit_list.pop(i)
+
         elif fruit_list[i][1] > h + fruits_size:
             fruit_list.pop(i)
 
@@ -332,7 +426,6 @@ def draw_game():
     player_image = pygame.transform.scale(player_image, (140, 200))
     screen.blit(player_image, (player_x, player_y))
 
-
     for banana in bananas:
         screen.blit(banana_image, (banana[0], banana[1]))
     for bomb in bombs:
@@ -345,7 +438,6 @@ def draw_game():
     screen.blit(pause_image, (1310, 10))
     screen.blit(back_button_image, (1500, 10))
 
-
     font = pygame.font.Font(None, 50)
     text = font.render(f"Рекорд игрока: {score}", True, 'white')
     screen.blit(text, (1220, 840))
@@ -355,7 +447,9 @@ def draw_game():
 
 
 def game_over():
-    global max_score, game_running, game_over_running, monkey_x, monkey_y
+    global max_score, game_running, score
+    pygame.mixer.music.load("music/game_over.mp3")
+    pygame.mixer.music.play(-1)
     game_running = False
     if score > max_score:
         max_score = score
@@ -366,16 +460,16 @@ def game_over():
 
     dance_direction = 1
     dance_amplitude = 10
-    dance_speed = 5
+    dance_speed = 2
 
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
+                if event.key == pygame.K_RETURN and game_win_running == False:
+                    reset_game()
                     return
 
         screen.fill('black')
@@ -385,7 +479,7 @@ def game_over():
         if monkey_y > h // 2 + dance_amplitude or monkey_y < h // 2 - dance_amplitude:
             dance_direction *= -1
 
-        scaled_monkey_image = pygame.transform.scale(monkey_image, (500, 540))
+        scaled_monkey_image = pygame.transform.scale(monkey_over_image, (500, 540))
         screen.blit(scaled_monkey_image, (monkey_x, monkey_y - (scaled_monkey_image.get_height() - 500) // 2))
 
         font = pygame.font.Font(None, 72)
@@ -401,47 +495,52 @@ def game_over():
         pygame.display.flip()
         pygame.time.delay(20)
 
-    while game_over_running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
-
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
-                    show_intro()
-                    game_over_running = False
-
-
-
-        pygame.display.flip()
-        pygame.time.delay(100)
 
 
 def game_win():
-    global max_score, game_running, game_win_running
+    global max_score, game_running, game_win_running, game_over_running
+    pygame.mixer.music.load("music/game_win.mp3")
+    pygame.mixer.music.play(-1)
+    pygame.mixer.music.set_volume(1)
+
     game_running = False
+    game_over_running = False
     if score > max_score:
         max_score = score
         save_player_data()
 
-    while game_win_running:
+    monkey_x = w // 2 - 250
+    monkey_y = h // 2
+
+    dance_direction = 2
+    dance_amplitude = 10
+    dance_speed = 5
+
+    while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
-                    show_intro()
-                    game_win_running = False
+                    reset_game()
+                    return
 
+        screen.fill('black')
+        screen.blit(background_image, (0, 0))
 
+        monkey_y += dance_direction * dance_speed
+        if monkey_y > h // 2 + dance_amplitude or monkey_y < h // 2 - dance_amplitude:
+            dance_direction *= -1
 
+        scaled_monkey_image = pygame.transform.scale(monkey_image, (500, 540))
+        screen.blit(scaled_monkey_image, (monkey_x, monkey_y - (scaled_monkey_image.get_height() - 500) // 2))
+
+        screen.blit(scaled_monkey_image, (monkey_x, monkey_y - (scaled_monkey_image.get_height() - 500) // 2))
 
         font = pygame.font.Font(None, 72)
-        game_over_text = font.render("Победа!", True, (255, 0, 0))
-        screen.blit(game_over_text, (w // 2 - game_over_text.get_width() // 2, h // 2 - 50))
+        win_text = font.render("Победа!", True, (0, 255, 0))
+        screen.blit(win_text, (w // 2 - win_text.get_width() // 2, h // 2 - 50))
 
         final_score_text = font.render(f"Ваш счет: {max_score_for_win}", True, (255, 255, 0))
         screen.blit(final_score_text, (w // 2 - final_score_text.get_width() // 2, h // 2 + 10))
@@ -450,10 +549,13 @@ def game_win():
         screen.blit(return_button_text, (w // 2 - return_button_text.get_width() // 2, h // 2 + 70))
 
         pygame.display.flip()
-        pygame.time.delay(100)
+        pygame.time.delay(20)
 
 
 def show_intro():
+    pygame.mixer.music.load("music/intro.mp3")
+    pygame.mixer.music.play(-1)
+    pygame.mixer.music.set_volume(0.5)
     intro_running = True
     while intro_running:
         for event in pygame.event.get():
@@ -464,11 +566,11 @@ def show_intro():
                 intro_running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_x, mouse_y = event.pos
-                if (670 < mouse_x < 970) and (350 < mouse_y < 490) and nickname != "":
+
+                if (670 < mouse_x < 970) and (350 < mouse_y < 490):
                     intro_running = False
-                    start_game()
-                if (670 < mouse_x < 970) and (350 < mouse_y < 490) and nickname == "":
-                    show_warning()
+                    show_level_selection()
+
                 if (670 < mouse_x < 870) and (450 < mouse_y < 550):
                     font = pygame.font.Font(None, 30)
                     text = font.render("(Чтобы закрыть инструкцию нажмите любую кнопку на клавиатуре)", True, 'white')
@@ -479,11 +581,11 @@ def show_intro():
                 if is_registered and (20 < mouse_x < 200) and (770 < mouse_y < 910):
                     show_player_info()
 
+
         screen.blit(intro_image, (0, 0))
         screen.blit(settings_image, (670, 450))
         screen.blit(instruction_button_image, (670, 550))
         screen.blit(play_image, (670, 350))
-
 
         if not is_registered:
             screen.blit(login_button, (20, 770))
@@ -498,6 +600,7 @@ def show_intro():
 
 
 def pause_game():
+    pygame.mixer.music.load("music/pause.mp3")
     paused = True
     while paused:
         for event in pygame.event.get():
@@ -507,7 +610,7 @@ def pause_game():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_a:
                     paused = False
-                if event.key == pygame.K_d:  #
+                if event.key == pygame.K_d:
                     show_intro()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_x, mouse_y = event.pos
@@ -621,10 +724,11 @@ def show_registration():
 def main():
     load_data()
     show_intro()
-
     while True:
         if player_can_play:
             start_game()
+        else:
+            show_intro()
 
 
 if __name__ == "__main__":
