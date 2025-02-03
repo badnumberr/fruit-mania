@@ -16,5 +16,5 @@ FRUITS_TIMER = 2500
 CONTACT_DISTANCE = 80
 MAX_SCORE_FOR_WIN = 150
 
-DATA_FILE = '../registered_players/players_data.txt'
-LAST_PLAYER_FILE = '../registered_players/last_player.txt'
+DATA_FILE = '../registered_player/players_data.txt'
+LAST_PLAYER_FILE = '../registered_player/last_player.txt'

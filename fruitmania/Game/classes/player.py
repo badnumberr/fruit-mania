@@ -17,9 +17,6 @@ def load_image(path, size):
 
 
 back_button_image = load_image("../images/back_button.png", (180, 90))
-login_screen = False
-input_active = [False, False]
-last_player_file = '../registered_players/last_player.txt'
 
 
 class Player:
@@ -30,8 +27,18 @@ class Player:
         self.is_registered = False
         self.current_player_data = {}
 
+    def login(self, nickname, password):
+        self.nickname = nickname
+        self.load_data()
+
+        if self.is_registered and self.password == password:
+            return True
+        else:
+            self.is_registered = False
+            return False
+
     def load_data(self):
-        conn = sqlite3.connect('players.db')
+        conn = sqlite3.connect('../fruitmania_database/players.db')
         cursor = conn.cursor()
 
         cursor.execute("SELECT * FROM players WHERE nickname=?", (self.nickname,))
@@ -39,8 +46,8 @@ class Player:
 
         if result:
             self.is_registered = True
-            self.password = result[2]
-            self.max_score = result[3]
+            self.password = result[1]
+            self.max_score = int(result[2])
             self.current_player_data[self.nickname] = {
                 'password': self.password,
                 'max_score': self.max_score
@@ -50,21 +57,44 @@ class Player:
 
         conn.close()
 
+    def load_last_player(self):
+        try:
+            with open(LAST_PLAYER_FILE, 'r', encoding='utf-8') as file:
+                last_player_name = file.readline().strip()
+                if last_player_name in self.current_player_data:
+                    nickname = last_player_name
+                    self.max_score = self.current_player_data[nickname]['max_score']
+                    self.registration_date = datetime.datetime.now().strftime("%d-%m-%Y")
+                    self.is_registered = True
+        except FileNotFoundError:
+            print("Файл с последним игроком не найден.")
+
     def register_player(self, nickname, password):
-        conn = sqlite3.connect('players.db')
+        conn = sqlite3.connect('../fruitmania_database/players.db')
         cursor = conn.cursor()
-        registration_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        cursor.execute("SELECT * FROM players WHERE nickname=?", (nickname,))
+        existing_player = cursor.fetchone()
+
+        if existing_player:
+            self.save_last_player()
+            conn.close()
+            return False
+
+        registration_date = datetime.now().strftime('%d-%m-%Y')
         cursor.execute("INSERT INTO players (nickname, password, max_score, registration_date) VALUES (?, ?, ?, ?)",
                        (nickname, password, 0, registration_date))
         conn.commit()
         conn.close()
+        return True
 
     def save_player_data(self):
-        conn = sqlite3.connect('players.db')
-        cursor = conn.cursor()
-        cursor.execute("UPDATE players SET max_score=? WHERE nickname=?", (self.max_score, self.nickname))
-        conn.commit()
-        conn.close()
+        if self.nickname in self.current_player_data:
+            self.current_player_data[self.nickname]['max_score'] = max(self.current_player_data[self.nickname]['max_score'], self.score)
+        self.save_last_player()
+
+    def save_last_player(self):
+        with open(LAST_PLAYER_FILE, 'w', encoding='utf-8') as file:
+            file.write(self.nickname)
 
     def show_player_info(self, game_instance):
         self.game = game_instance
@@ -81,6 +111,7 @@ class Player:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_x, mouse_y = event.pos
                     if back_button_rect.collidepoint(mouse_x, mouse_y):
+                        self.game.show_intro()
                         info_running = False
                     if logout_button_rect.collidepoint(mouse_x, mouse_y):
                         self.logout()
@@ -114,7 +145,7 @@ class Player:
             pygame.time.delay(5)
 
     def get_registration_date(self):
-        conn = sqlite3.connect('players.db')
+        conn = sqlite3.connect('../fruitmania_database/players.db')
         cursor = conn.cursor()
         cursor.execute("SELECT registration_date FROM players WHERE nickname=?", (self.nickname,))
         result = cursor.fetchone()
@@ -129,8 +160,6 @@ class Player:
         self.password = ""
         self.is_registered = False
         self.max_score = 0
-        self.registration_date = ''
-        self.score = 0
         self.current_player_data = {}
         self.clear_last_player_file()
         self.game.show_intro()

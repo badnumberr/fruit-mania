@@ -58,6 +58,8 @@ class Game:
         self.max_score_for_win = 150
         self.cursor_visible = True
         self.cursor_timer = 0
+        self.player.load_last_player()
+
 
     def reset_game(self):
         self.player_x = W // 2 - PLAYER_SIZE // 2
@@ -306,6 +308,8 @@ class Game:
                 SCREEN.blit(login_button, (20, 770))
                 SCREEN.blit(registration_button, (290, 770))
 
+            self.player.load_last_player()
+
             pygame.display.flip()
             pygame.time.delay(20)
 
@@ -514,7 +518,7 @@ class Game:
         input_active = 0
         cursor_visible = True
         cursor_timer = 0
-
+        error_message = ""
         while self.login_running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -530,10 +534,16 @@ class Game:
                             self.player.load_data()
                             if self.player.is_registered:
                                 input_active = 1
+                            else:
+                                error_message = "Пользователь не найден"
                         elif input_active == 1:
-                            if self.player.password == self.player.current_player_data[self.player.nickname]['password']:
-                                self.player.is_registered = True
+                            stored_password = self.player.current_player_data.get(self.player.nickname, {}).get('password', '')
+                            if self.password == stored_password:
+                                self.player.save_last_player()
                                 self.login_running = False
+                            else:
+                                error_message = "Неверный пароль"
+                                self.password = ""
 
                     elif event.key == pygame.K_BACKSPACE:
                         if input_active == 0 and len(self.player.nickname) > 0:
@@ -590,9 +600,9 @@ class Game:
                 cursor_y = password_rect.y + 10
                 pygame.draw.line(SCREEN, 'white', (cursor_x, cursor_y), (cursor_x, cursor_y + 40), 2)
 
-            login_button_image = load_image("../images/login_button.png", (180, 90))
-            login_button_rect = login_button_image.get_rect(center=(W // 2, 650))
-            SCREEN.blit(login_button_image, login_button_rect)
+            if error_message:
+                error_text = font.render(error_message, True, 'red')
+                SCREEN.blit(error_text, (W // 2 - error_text.get_width() // 2, 100))
 
             back_button_image = load_image("../images/back_button.png", (180, 90))
             back_button_rect = back_button_image.get_rect(center=(W // 2, H - 100))
@@ -619,6 +629,7 @@ class Game:
                             success = self.player.register_player(self.player.nickname, self.player.password)
                             if success:
                                 self.player.is_registered = True
+                                self.player.save_last_player()
                                 settings_running = False
                     elif event.key == pygame.K_BACKSPACE:
                         if self.input_active == 1 and len(self.player.password) > 0:
@@ -681,5 +692,5 @@ class Game:
                 SCREEN.blit(back_button_image, back_button_rect)
 
                 pygame.display.flip()
-                pygame.time.delay(100)
+                pygame.time.delay(20)
 
