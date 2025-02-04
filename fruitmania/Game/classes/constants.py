@@ -14,7 +14,7 @@ ORANGE_SPEED = 5.5
 
 FRUITS_TIMER = 2500
 CONTACT_DISTANCE = 80
-MAX_SCORE_FOR_WIN = 150
+MAX_SCORE_FOR_WIN = 10
 
 DATA_FILE = '../registered_player/players_data.txt'
 LAST_PLAYER_FILE = '../registered_player/last_player.txt'

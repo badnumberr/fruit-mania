@@ -3,7 +3,7 @@ from game import Game
 from player import Player
 
 
-def main():
+def main():  # запуск программы
     player = Player()
     game = Game()
     game.show_intro()

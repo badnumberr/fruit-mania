@@ -1,12 +1,10 @@
 import random
 from player import Player
+import sqlite3
 from constants import *
 
 pygame.init()
 pygame.mixer.init()
-
-
-fruit_sound = pygame.mixer.Sound("../music/fruit.mp3")
 
 
 def load_image(path, size):
@@ -25,9 +23,9 @@ orange_image = load_image("../images/orange.png", (70, 70))
 background_image = load_image("../images/background.png", (1200, H))
 intro_image = load_image("../images/intro.png", (W, H))
 instruction_image = load_image("../images/instruction.png", (600, 800))
-settings_image = load_image("../images/instruction_button.png", (300, 140))
+instruction_button = load_image("../images/instruction_button.png", (300, 140))
 play_image = load_image("../images/play_button.png", (300, 140))
-instruction_button_image = load_image("../images/settings_button.png", (300, 140))
+table_button_image = load_image("../images/table_record.png", (300, 140))
 registration_button = load_image("../images/registration_button.png", (260, 140))
 login_button = load_image("../images/login_button.png", (260, 140))
 back_button_image = load_image("../images/back_button.png", (180, 90))
@@ -55,11 +53,15 @@ class Game:
         self.player = Player()
         self.input_active = False
         self.warning = False
-        self.max_score_for_win = 150
         self.cursor_visible = True
         self.cursor_timer = 0
         self.player.load_last_player()
-
+        self.last_fruit = pygame.time.get_ticks()
+        self.player_can_play = False
+        self.game_over_running = False
+        self.game_win_running = False
+        self.password = ""
+        self.login_running = False
 
     def reset_game(self):
         self.player_x = W // 2 - PLAYER_SIZE // 2
@@ -76,6 +78,9 @@ class Game:
         self.game_win_running = False
 
     def start_game(self, level=1):
+        if self.score > self.player.max_score:
+            self.player.max_score = self.score
+            self.player.save_player_data()
         pygame.mixer.music.load("../music/game.mp3")
         pygame.mixer.music.play(-1)
 
@@ -233,22 +238,25 @@ class Game:
             circle_x, circle_y = fruit_list[i]
 
             if is_bomb and (
-                    abs(self.player_x - circle_x) < CONTACT_DISTANCE and abs(self.player_y - circle_y) < CONTACT_DISTANCE):
+                    abs(self.player_x - circle_x) < CONTACT_DISTANCE and abs(self.player_y - circle_y) <
+                    CONTACT_DISTANCE):
+                pygame.mixer.Sound("../music/boom.mp3").play()
                 self.game_over()
                 self.game_running = False
                 return
 
             if (not is_bomb) and (
-                    abs(self.player_x - circle_x) < CONTACT_DISTANCE and abs(self.player_y - circle_y) < CONTACT_DISTANCE):
-                fruit_sound.play()
+                    abs(self.player_x - circle_x) < CONTACT_DISTANCE and abs(self.player_y - circle_y) <
+                    CONTACT_DISTANCE):
+                pygame.mixer.Sound("../music/fruit.mp3").play()
                 self.score += score_change
                 fruit_list.pop(i)
 
             elif fruit_list[i][1] > H + FRUITS_SIZE:
                 fruit_list.pop(i)
 
-        if self.score >= self.max_score_for_win:
-            self.score = self.max_score_for_win
+        if self.score >= MAX_SCORE_FOR_WIN:
+            self.score = MAX_SCORE_FOR_WIN
             self.game_win()
 
         for banana in self.bananas:
@@ -287,6 +295,9 @@ class Game:
                         SCREEN.blit(text, (500, 840))
                         self.show_instructions()
 
+                    if (670 < mouse_x < 970) and (550 < mouse_y < 650):
+                        self.show_leaderboard()
+
                     if (290 < mouse_x < 550) and (770 < mouse_y < 910) and not self.player.is_registered:
                         self.show_registration()
                     if self.player.is_registered and (20 < mouse_x < 200) and (770 < mouse_y < 910):
@@ -296,8 +307,8 @@ class Game:
 
             SCREEN.blit(intro_image, (0, 0))
             SCREEN.blit(play_image, (670, 350))
-            SCREEN.blit(settings_image, (670, 450))
-            SCREEN.blit(instruction_button_image, (670, 550))
+            SCREEN.blit(instruction_button, (670, 450))
+            SCREEN.blit(table_button_image, (670, 550))
 
             if self.player.is_registered:
                 font = pygame.font.Font(None, 55)
@@ -461,9 +472,11 @@ class Game:
             pygame.time.delay(20)
 
     def game_win(self):
+        if self.score > self.player.max_score:
+            self.player.max_score = self.score
+            self.player.save_player_data()
         pygame.mixer.music.load("../music/game_win.mp3")
         pygame.mixer.music.play(-1)
-        pygame.mixer.music.set_volume(1)
         self.game_running = False
         self.game_over_running = False
         if self.score > self.player.max_score:
@@ -484,6 +497,7 @@ class Game:
                     quit()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
+                        self.show_intro()
                         self.reset_game()
                         return
 
@@ -503,7 +517,7 @@ class Game:
             win_text = font.render("Победа!", True, (0, 255, 0))
             SCREEN.blit(win_text, (W // 2 - win_text.get_width() // 2, H // 2 - 50))
 
-            final_score_text = font.render(f"Ваш счет: {self.max_score_for_win}", True, (255, 255, 0))
+            final_score_text = font.render(f"Ваш счет: {MAX_SCORE_FOR_WIN}", True, (255, 255, 0))
             SCREEN.blit(final_score_text, (W // 2 - final_score_text.get_width() // 2, H // 2 + 10))
 
             return_button_text = font.render("Нажмите Enter, чтобы вернуться", True, (255, 255, 255))
@@ -537,7 +551,8 @@ class Game:
                             else:
                                 error_message = "Пользователь не найден"
                         elif input_active == 1:
-                            stored_password = self.player.current_player_data.get(self.player.nickname, {}).get('password', '')
+                            stored_password = self.player.current_player_data.get(self.player.nickname,
+                                                                                  {}).get('password', '')
                             if self.password == stored_password:
                                 self.player.save_last_player()
                                 self.login_running = False
@@ -612,6 +627,9 @@ class Game:
             pygame.time.delay(20)
 
     def show_registration(self):
+        if self.score > self.player.max_score:
+            self.player.max_score = self.score
+            self.player.save_player_data()
         settings_running = True
         is_nickname_done = False
         self.input_active = 0
@@ -682,7 +700,8 @@ class Game:
                 SCREEN.blit(text_password, password_rect)
 
                 if self.input_active == 1 and self.cursor_visible:
-                    cursor_x = password_rect.x + text_password.get_width() + 10 if self.player.password else password_rect.x + 10
+                    cursor_x = password_rect.x + text_password.get_width() + 10 if self.player.password else (
+                            password_rect.x + 10)
                     cursor_y = password_rect.y + 10
                     pygame.draw.line(SCREEN, 'white', (cursor_x, cursor_y), (cursor_x, cursor_y + 40), 2)
 
@@ -694,3 +713,58 @@ class Game:
                 pygame.display.flip()
                 pygame.time.delay(20)
 
+    def show_leaderboard(self):
+        leaderboard_running = True
+        while leaderboard_running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+                if event.type == pygame.KEYDOWN:
+                    leaderboard_running = False
+
+            SCREEN.blit(intro_image, (0, 0))
+
+            overlay_surface = pygame.Surface((600, 800))
+            overlay_surface.set_alpha(130)
+            overlay_surface.fill((0, 0, 0, 200))
+            SCREEN.blit(overlay_surface, (550, 0))
+
+            font = pygame.font.Font(None, 45)
+            title_text = font.render("Таблица рекордов", True, 'white')
+            SCREEN.blit(title_text, (W // 2 - title_text.get_width() // 2, 50))
+
+            conn = sqlite3.connect('../fruitmania_database/players.db')
+            cursor = conn.cursor()
+            cursor.execute("SELECT nickname, max_score FROM players ORDER BY max_score DESC")
+            records = cursor.fetchall()
+            conn.close()
+
+            row_height = 60
+            start_y = 120
+
+            header_text = font.render("Рейтинг", True, 'green')
+            SCREEN.blit(header_text, (W // 2 - 100, start_y - 40))
+            header_text = font.render("Никнейм", True, 'green')
+            SCREEN.blit(header_text, (W // 2 - 250, start_y - 40))
+            header_text = font.render("Макс. счет", True, 'green')
+            SCREEN.blit(header_text, (W // 2 + 100, start_y - 40))
+
+            for index, (nickname, max_score) in enumerate(records):
+                record_text = font.render(f"{index + 1}", True, 'green')
+                SCREEN.blit(record_text, (W // 2 - 100, start_y + index * row_height))
+                record_text = font.render(nickname, True, 'green')
+                SCREEN.blit(record_text, (W // 2 - 250, start_y + index * row_height))
+                record_text = font.render(str(max_score), True, 'green')
+                SCREEN.blit(record_text, (W // 2 + 100, start_y + index * row_height))
+
+                pygame.draw.line(SCREEN, 'white', (W // 2 - 300, start_y + (index + 1) * row_height - 10),
+                                 (W // 2 + 300, start_y + (index + 1) * row_height - 10), 2)
+
+            back_button_rect = back_button_image.get_rect(center=(W // 2, H - 100))
+            SCREEN.blit(back_button_image, back_button_rect)
+
+            if back_button_rect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
+                leaderboard_running = False
+            pygame.display.flip()
+            pygame.time.delay(20)

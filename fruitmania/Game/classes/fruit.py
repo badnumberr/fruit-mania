@@ -42,13 +42,15 @@ class Fruit:
             circle_x, circle_y = fruit_list[i]
 
             if is_bomb and (
-                    abs(self.game.player_x - circle_x) < CONTACT_DISTANCE and abs(self.game.player_y - circle_y) < CONTACT_DISTANCE):
+                    abs(self.game.player_x - circle_x) < CONTACT_DISTANCE and abs(self.game.player_y - circle_y) <
+                    CONTACT_DISTANCE):
                 self.game.game_over()
                 self.game.game_running = False
                 return
 
             if (not is_bomb) and (
-                    abs(self.game.player_x - circle_x) < CONTACT_DISTANCE and abs(self.game.player_y - circle_y) < CONTACT_DISTANCE):
+                    abs(self.game.player_x - circle_x) < CONTACT_DISTANCE and abs(self.game.player_y - circle_y) <
+                    CONTACT_DISTANCE):
                 fruit_sound.play()
                 self.game.score += score_change
                 fruit_list.pop(i)
@@ -56,8 +58,8 @@ class Fruit:
             elif fruit_list[i][1] > H + FRUITS_SIZE:
                 fruit_list.pop(i)
 
-        if self.game.score >= self.game.max_score_for_win:
-            self.game.score = self.game.max_score_for_win
+        if self.game.score >= MAX_SCORE_FOR_WIN:
+            self.game.score = MAX_SCORE_FOR_WIN
             self.game.game_win()
 
         for banana in self.game.bananas:
@@ -68,4 +70,3 @@ class Fruit:
             SCREEN.blit(strawberry_image, (strawberry[0], strawberry[1]))
         for orange in self.game.oranges:
             SCREEN.blit(orange_image, (orange[0], orange[1]))
-

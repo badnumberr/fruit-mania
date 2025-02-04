@@ -5,15 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ee27d05d-a59e-47a1-a012-2445989d3a0a" name="Changes" comment="fruitmania">
-      <change afterPath="$PROJECT_DIR$/fruitmania/Game/registered_player/last_player.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fruitmania/Game/images/table_record.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fruitmania/Game/music/boom.mp3" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fruitmania/Game/music/game_win_sec.mp3" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fruitmania/Game/classes/constants.py" beforeDir="false" afterPath="$PROJECT_DIR$/fruitmania/Game/classes/constants.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fruitmania/Game/classes/create_database.py" beforeDir="false" afterPath="$PROJECT_DIR$/fruitmania/Game/fruitmania_database/create_database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fruitmania/Game/classes/fruit.py" beforeDir="false" afterPath="$PROJECT_DIR$/fruitmania/Game/classes/fruit.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fruitmania/Game/classes/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/fruitmania/Game/classes/game.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fruitmania/Game/classes/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/fruitmania/Game/classes/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fruitmania/Game/classes/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/fruitmania/Game/classes/player.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fruitmania/Game/classes/players.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/fruitmania/Game/registered_players/last_player.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/fruitmania/Game/registered_players/players_data.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fruitmania/Game/fruitmania_database/players.db" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fruitmania/Game/images/continue.png" beforeDir="false" afterPath="$PROJECT_DIR$/fruitmania/Game/images/continue.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fruitmania/Game/images/intro_open.png" beforeDir="false" afterPath="$PROJECT_DIR$/fruitmania/Game/images/intro_open.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fruitmania/Game/images/pause.png" beforeDir="false" afterPath="$PROJECT_DIR$/fruitmania/Game/images/pause.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fruitmania/Game/registered_player/last_player.txt" beforeDir="false" afterPath="$PROJECT_DIR$/fruitmania/Game/registered_player/last_player.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,41 +44,41 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.1.executor&quot;: &quot;Run&quot;,
-    &quot;Python.aa.executor&quot;: &quot;Run&quot;,
-    &quot;Python.create_database.executor&quot;: &quot;Run&quot;,
-    &quot;Python.database.executor&quot;: &quot;Run&quot;,
-    &quot;Python.design.executor&quot;: &quot;Run&quot;,
-    &quot;Python.game.executor&quot;: &quot;Run&quot;,
-    &quot;Python.intro.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main1.executor&quot;: &quot;Run&quot;,
-    &quot;Python.mmm.executor&quot;: &quot;Run&quot;,
-    &quot;Python.player.executor&quot;: &quot;Run&quot;,
-    &quot;Python.sound.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/чепушик/PycharmProjects/pythonProject10/fruitmania/Game/images&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.1.executor": "Run",
+    "Python.aa.executor": "Run",
+    "Python.create_database.executor": "Run",
+    "Python.database.executor": "Run",
+    "Python.design.executor": "Run",
+    "Python.game.executor": "Run",
+    "Python.intro.executor": "Run",
+    "Python.main.executor": "Run",
+    "Python.main1.executor": "Run",
+    "Python.mmm.executor": "Run",
+    "Python.player.executor": "Run",
+    "Python.sound.executor": "Run",
+    "Python.test.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "C:/Users/чепушик/PycharmProjects/pythonProject10/fruitmania/Game/images"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\чепушик\PycharmProjects\pythonProject10\fruitmania\Game\images" />
+      <recent name="C:\Users\чепушик\PycharmProjects\pythonProject10\fruitmania\Game\music" />
       <recent name="C:\Users\чепушик\PycharmProjects\pythonProject10\fruitmania\music" />
       <recent name="C:\Users\чепушик\PycharmProjects\pythonProject10\fruitmania\images" />
       <recent name="C:\Users\чепушик\PycharmProjects\pythonProject10\fruitmania" />
-      <recent name="C:\Users\чепушик\PycharmProjects\pythonProject10" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\чепушик\PycharmProjects\pythonProject10\fruitmania\Game\fruitmania_database" />
+      <recent name="C:\Users\чепушик\PycharmProjects\pythonProject10\fruitmania\Game\classes" />
       <recent name="C:\Users\чепушик\PycharmProjects\pythonProject10\fruitmania\Game" />
       <recent name="C:\Users\чепушик\PycharmProjects\pythonProject10\fruitmania\Game\classes\fruitmania_database" />
       <recent name="C:\Users\чепушик\PycharmProjects\pythonProject10\fruitmania" />
-      <recent name="C:\Users\чепушик\PycharmProjects\pythonProject10\fruitmania\Game\classes" />
     </key>
   </component>
   <component name="RunManager">
@@ -203,7 +208,23 @@
       <option name="project" value="LOCAL" />
       <updated>1738495434246</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="fruitmania">
+      <option name="closed" value="true" />
+      <created>1738589752482</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1738589752482</updated>
+    </task>
+    <task id="LOCAL-00010" summary="fruitmania">
+      <option name="closed" value="true" />
+      <created>1738589758084</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1738589758084</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="UnknownFeatures">
