@@ -63,7 +63,7 @@ class Game:
         self.password = ""
         self.login_running = False
 
-    def reset_game(self):
+    def reset_game(self):  # сбрасывает данные перед новой игрой
         self.player_x = W // 2 - PLAYER_SIZE // 2
         self.player_y = H - PLAYER_SIZE - 10
         self.score = 0
@@ -77,7 +77,7 @@ class Game:
         self.game_over_running = False
         self.game_win_running = False
 
-    def start_game(self, level=1):
+    def start_game(self, level=1):  # запуск игры
         if self.score > self.player.max_score:
             self.player.max_score = self.score
             self.player.save_player_data()
@@ -166,7 +166,7 @@ class Game:
             pygame.display.flip()
             pygame.time.delay(20)
 
-    def draw_game(self):
+    def draw_game(self):  # отрисовка игры
         SCREEN.fill('black')
         SCREEN.blit(background_image, (0, 0))
 
@@ -193,7 +193,7 @@ class Game:
         text = font.render(f"Игрок: {self.player.nickname}", True, 'white')
         SCREEN.blit(text, (1220, 790))
 
-    def pause_game(self):
+    def pause_game(self):  # приостанавливает процесс игры когда она на паузе
         paused = True
         pygame.mixer.music.pause()
 
@@ -231,7 +231,7 @@ class Game:
             pygame.display.flip()
             pygame.time.delay(20)
 
-    def handle_fruits(self, fruit_list, speed, score_change, is_bomb=False):
+    def handle_fruits(self, fruit_list, speed, score_change, is_bomb=False):  # отрисовывает фрукты
         self.game_running = True
         for i in range(len(fruit_list) - 1, -1, -1):
             fruit_list[i][1] += speed
@@ -268,7 +268,7 @@ class Game:
         for orange in self.oranges:
             SCREEN.blit(orange_image, (orange[0], orange[1]))
 
-    def show_intro(self):
+    def show_intro(self):  # открывает окно заставки
         pygame.mixer.music.load("../music/intro.mp3")
         pygame.mixer.music.play(-1)
         pygame.mixer.music.set_volume(0.5)
@@ -324,7 +324,7 @@ class Game:
             pygame.display.flip()
             pygame.time.delay(20)
 
-    def show_instructions(self):
+    def show_instructions(self):  # показывает инструкцию
         a = 0
         instructions_running = True
         while instructions_running:
@@ -344,7 +344,7 @@ class Game:
             pygame.display.flip()
             pygame.time.delay(5)
 
-    def show_warning(self):
+    def show_warning(self):  # показывает предупреждение если игрок без аккаунта
         a = 0
         warning_running = True
         while warning_running:
@@ -366,7 +366,7 @@ class Game:
 
         self.show_intro()
 
-    def game_over(self):
+    def game_over(self):  # финальный экран поражения
         pygame.mixer.music.load("../music/game_over.mp3")
         pygame.mixer.music.play(-1)
         self.game_running = False
@@ -415,7 +415,7 @@ class Game:
             pygame.display.flip()
             pygame.time.delay(20)
 
-    def show_level_selection(self):
+    def show_level_selection(self):  # окно с выбором уровней
         if not self.player.is_registered:
             self.show_warning()
             return
@@ -471,7 +471,7 @@ class Game:
             pygame.display.flip()
             pygame.time.delay(20)
 
-    def game_win(self):
+    def game_win(self):  # финальный экран победы
         if self.score > self.player.max_score:
             self.player.max_score = self.score
             self.player.save_player_data()
@@ -526,7 +526,7 @@ class Game:
             pygame.display.flip()
             pygame.time.delay(20)
 
-    def show_login(self):
+    def show_login(self):  # показывает окно входа в аккаунт
         self.login_running = True
         self.password = ""
         input_active = 0
@@ -626,13 +626,14 @@ class Game:
             pygame.display.flip()
             pygame.time.delay(20)
 
-    def show_registration(self):
+    def show_registration(self):  # показывает окно регистрации
         if self.score > self.player.max_score:
             self.player.max_score = self.score
             self.player.save_player_data()
         settings_running = True
         is_nickname_done = False
         self.input_active = 0
+        error_message = ""
 
         while settings_running:
             for event in pygame.event.get():
@@ -649,6 +650,10 @@ class Game:
                                 self.player.is_registered = True
                                 self.player.save_last_player()
                                 settings_running = False
+                            else:
+                                error_message = "Никнейм уже занят"
+                                self.input_active = 0
+
                     elif event.key == pygame.K_BACKSPACE:
                         if self.input_active == 1 and len(self.player.password) > 0:
                             self.player.password = self.player.password[:-1]
@@ -710,10 +715,14 @@ class Game:
                 back_button_rect = back_button_image.get_rect(center=(W // 2, H - 100))
                 SCREEN.blit(back_button_image, back_button_rect)
 
+                if error_message:
+                    error_text = font.render(error_message, True, 'red')
+                    SCREEN.blit(error_text, (W // 2 - error_text.get_width() // 2, 100))
+
                 pygame.display.flip()
                 pygame.time.delay(20)
 
-    def show_leaderboard(self):
+    def show_leaderboard(self):  # показывает окно с таблицей рекордов
         leaderboard_running = True
         while leaderboard_running:
             for event in pygame.event.get():

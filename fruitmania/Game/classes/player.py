@@ -16,7 +16,7 @@ def load_image(path, size):  # обработка изображений
         return None
 
 
-class Player:
+class Player:  # инизиализация необходимых переменных
     def __init__(self):
         self.nickname = ""
         self.password = ""
@@ -25,7 +25,7 @@ class Player:
         self.current_player_data = {}
         self.registration_date = ''
 
-    def login(self, nickname, password):  # проверяет успешно ли прошел вход в аккаунт
+    def login(self, nickname, password):  # функция проверяет успешно ли прошел вход в аккаунт
         self.nickname = nickname
         self.load_data()
 
@@ -35,7 +35,7 @@ class Player:
             self.is_registered = False
             return False
 
-    def load_data(self):  #
+    def load_data(self):  # выгружат данные об игроке из базы данных
         conn = sqlite3.connect('../fruitmania_database/players.db')
         cursor = conn.cursor()
 
@@ -55,36 +55,27 @@ class Player:
 
         conn.close()
 
-    def load_last_player(self):  #
-        try:
-            with open(LAST_PLAYER_FILE, 'r', encoding='utf-8') as file:
-                last_player_name = file.readline().strip()
-                if last_player_name in self.current_player_data:
-                    nickname = last_player_name
-                    self.max_score = self.current_player_data[nickname]['max_score']
-                    self.registration_date = datetime.datetime.now().strftime("%d-%m-%Y")
-                    self.is_registered = True
-        except FileNotFoundError:
-            print("Файл с последним игроком не найден.")
-
     def register_player(self, nickname, password):
-        if nickname in self.current_player_data:
-            return False
-        registration_date = datetime.datetime.now().strftime('%d-%m-%Y')
-
         conn = sqlite3.connect('../fruitmania_database/players.db')
         cursor = conn.cursor()
+        cursor.execute("SELECT * FROM players WHERE nickname = ?", (nickname,))
+        if cursor.fetchone() is not None:
+            conn.close()
+            return False
+        registration_date = datetime.datetime.now().strftime('%d-%m-%Y')
         cursor.execute("INSERT INTO players (nickname, password, max_score, registration_date) VALUES (?, ?, ?, ?)",
                        (nickname, password, 0, registration_date))
         conn.commit()
         conn.close()
-
-        self.current_player_data[nickname] = {'password': password, 'max_score': 0, 'registration_date':
-            registration_date}
+        self.current_player_data[nickname] = {
+            'password': password,
+            'max_score': 0,
+            'registration_date': registration_date
+        }
         self.is_registered = True
         return True
 
-    def save_player_data(self):
+    def save_player_data(self):  # сохраняет новые данные об игроке в БД
         if self.nickname in self.current_player_data:
             current_max_score = self.current_player_data[self.nickname]['max_score']
             new_max_score = max(current_max_score, self.max_score)
@@ -96,13 +87,24 @@ class Player:
             conn.close()
 
             self.current_player_data[self.nickname]['max_score'] = new_max_score
-        self.save_last_player()
 
-    def save_last_player(self):
+    def load_last_player(self):  # выгружает данные о последнем игроке
+        try:
+            with open(LAST_PLAYER_FILE, 'r', encoding='utf-8') as file:
+                last_player_name = file.readline().strip()
+                if last_player_name in self.current_player_data:
+                    nickname = last_player_name
+                    self.max_score = self.current_player_data[nickname]['max_score']
+                    self.registration_date = datetime.datetime.now().strftime("%d-%m-%Y")
+                    self.is_registered = True
+        except FileNotFoundError:
+            print("Файл с последним игроком не найден.")
+
+    def save_last_player(self):  # сохраняет данные о последнем игроке в текстовый файл
         with open(LAST_PLAYER_FILE, 'w', encoding='utf-8') as file:
             file.write(self.nickname)
 
-    def show_player_info(self, game_instance):
+    def show_player_info(self, game_instance):  # открывает окно с показом информации об игроке
         self.game = game_instance
         info_running = True
 
@@ -113,7 +115,6 @@ class Player:
                     quit()
                 if event.type == pygame.KEYDOWN:
                     info_running = False
-
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_x, mouse_y = event.pos
                     if back_button_rect.collidepoint(mouse_x, mouse_y):
@@ -134,7 +135,7 @@ class Player:
 
             nickname_text = font.render(f"Никнейм: {self.nickname}", True, 'white')
             score_text = font.render(f"Максимальный счет: {self.max_score}", True, 'white')
-            registration_text = font.render(f"Дата регистрации: {self.get_registration_date()}", True, 'white')
+            registration_text = font.render(f"Дата регистрации: {self.registration_date}", True, 'white')
 
             SCREEN.blit(nickname_text, (W // 2 - nickname_text.get_width() // 2, 150))
             SCREEN.blit(score_text, (W // 2 - score_text.get_width() // 2, 200))
@@ -152,16 +153,8 @@ class Player:
             pygame.display.flip()
             pygame.time.delay(5)
 
-    def get_registration_date(self):
-        conn = sqlite3.connect('../fruitmania_database/players.db')
-        cursor = conn.cursor()
-        cursor.execute("SELECT registration_date FROM players WHERE nickname=?", (self.nickname,))
-        result = cursor.fetchone()
-        conn.close()
 
-        return result[0] if result else "Неизвестно"
-
-    def logout(self):
+    def logout(self):  # сбрасывает все данные в игре после выхода из аккаунта
         self.save_player_data()
         self.nickname = ""
         self.password = ""
@@ -171,6 +164,6 @@ class Player:
         self.clear_last_player_file()
         self.game.show_intro()
 
-    def clear_last_player_file(self):
+    def clear_last_player_file(self):  # после выхода из аккаунта очищает файл с последним игроком
         with open(LAST_PLAYER_FILE, 'w', encoding='utf-8') as file:
             file.write("")

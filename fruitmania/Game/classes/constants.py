@@ -1,5 +1,6 @@
 import pygame
 
+# все константы
 W = 1700
 H = 900
 SCREEN = pygame.display.set_mode((W, H))
@@ -14,7 +15,7 @@ ORANGE_SPEED = 5.5
 
 FRUITS_TIMER = 2500
 CONTACT_DISTANCE = 80
-MAX_SCORE_FOR_WIN = 10
+MAX_SCORE_FOR_WIN = 999
 
 DATA_FILE = '../registered_player/players_data.txt'
 LAST_PLAYER_FILE = '../registered_player/last_player.txt'
